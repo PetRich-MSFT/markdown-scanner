@@ -25,30 +25,26 @@
 
 namespace ApiDocs.Validation.OData
 {
-    using Newtonsoft.Json;
+    using System;
     using System.Collections.Generic;
     using System.Xml.Serialization;
     using Transformation;
-    using System;
 
-    [XmlRoot("EntitySet", Namespace = ODataParser.EdmNamespace)]
-    public class EntitySet : XmlBackedObject, Transformation.ITransformable
+    public class EnumType : XmlBackedObject, Transformation.ITransformable
     {
-        public EntitySet()
-        {
-            this.NavigationPropertyBinding = new List<OData.NavigationPropertyBinding>();
-        }
-
         [XmlAttribute("Name"), SortBy]
         public string Name { get; set; }
 
-        [XmlAttribute("EntityType"), ContainsType]
-        public string EntityType { get; set; }
+        [XmlAttribute("UnderlyingType"), ContainsType]
+        public string UnderlyingType { get; set; }
 
-        [XmlElement("NavigationPropertyBinding"), Sortable]
-        public List<NavigationPropertyBinding> NavigationPropertyBinding { get; set; }
+        [XmlAttribute("IsFlags")]
+        public bool IsFlags { get; set; }
 
-        public void ApplyTransformation(Transformation.BaseModifications mods, EntityFramework edmx, string[] versions)
+        [XmlElement("Member"), Sortable]
+        public List<EnumMember> Members { get; set; }
+
+        public void ApplyTransformation(BaseModifications mods, EntityFramework edmx, string[] versions)
         {
             TransformationHelper.ApplyTransformation(this, mods, edmx, versions);
         }
@@ -58,23 +54,21 @@ namespace ApiDocs.Validation.OData
 
     }
 
-    public class NavigationPropertyBinding: ITransformable
+    public class EnumMember : XmlBackedObject, ITransformable
     {
-        [XmlAttribute("Path"), SortBy]
-        public string Path { get; set; }
-        [XmlAttribute("Target"), ContainsType]
-        public string Target { get; set; }
+        [XmlAttribute("Name"), SortBy]
+        public string Name { get; set; }
+
+        [XmlAttribute("Value")]
+        public string Value { get; set; }
+
+        public void ApplyTransformation(BaseModifications value, EntityFramework edmx, string[] versions)
+        {
+            TransformationHelper.ApplyTransformation(this, value, edmx, versions);
+        }
 
         [XmlIgnore]
-        public string ElementIdentifier
-        {
-            get { return this.Path; }
-            set { this.Path = value; }
-        }
+        public string ElementIdentifier { get { return this.Name; } set { this.Name = value; } }
 
-        public void ApplyTransformation(BaseModifications mods, EntityFramework edmx, string[] versions)
-        {
-            TransformationHelper.ApplyTransformation(this, mods, edmx, versions);
-        }
     }
 }

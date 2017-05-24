@@ -25,20 +25,59 @@
 
 namespace ApiDocs.Validation.OData
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Xml.Serialization;
+    using Transformation;
 
     [XmlRoot("Annotation", Namespace = ODataParser.EdmNamespace)]
-    public class Annotation
+    public class Annotation : XmlBackedObject, Transformation.ITransformable
     {
-        [XmlAttribute("Term")]
+        [XmlAttribute("Term"), SortBy]
         public string Term { get; set; }
 
         [XmlAttribute("String"), DefaultValue(null)]
         public string String { get; set; }
 
-        [XmlElement("Record", Namespace = ODataParser.EdmNamespace), DefaultValue(null)]
+        
+        public bool? Bool { get; set; }
+
+        [XmlIgnore]
+        public bool BoolSpecified {
+            get
+            {
+                return Bool.HasValue;
+            }
+        }
+
+        [XmlIgnore]
+        public bool BoolAttributeValue
+        {
+            get
+            {
+                if (Bool.HasValue) return Bool.Value;
+                return false;
+            }
+            set
+            {
+                Bool = value;
+            }
+        }
+
+        [XmlElement("Record", Namespace = ODataParser.EdmNamespace), DefaultValue(null), Sortable]
         public List<Record> Records { get; set; }
+
+        #region ITransformable
+
+        public void ApplyTransformation(Transformation.BaseModifications mods, EntityFramework edmx, string[] versions)
+        {
+            TransformationHelper.ApplyTransformation(this, mods, edmx, versions);
+        }
+
+        [XmlIgnore]
+        public string ElementIdentifier { get { return this.Term; } set { this.Term = value; } }
+        #endregion
+
     }
 }
