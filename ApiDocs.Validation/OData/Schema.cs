@@ -32,7 +32,7 @@ namespace ApiDocs.Validation.OData
     using Transformation;
 
     [XmlRoot("Schema", Namespace = ODataParser.EdmNamespace)]
-    public class Schema : XmlBackedObject, ITransformable
+    public class Schema : XmlBackedTransformableObject
     {
         [XmlAttribute("Namespace", Namespace = ODataParser.EdmNamespace),
             SortBy]
@@ -70,6 +70,7 @@ namespace ApiDocs.Validation.OData
             Sortable]
         public List<Annotations> Annotations { get; set; }
 
+
         public Schema()
         {
             this.EntityTypes = new List<EntityType>();
@@ -78,14 +79,11 @@ namespace ApiDocs.Validation.OData
             this.Functions = new List<Function>();
             this.Actions = new List<Action>();
             this.Terms = new List<Term>();
+            this.Annotations = new List<Annotations>();
+            this.Enumerations = new List<EnumType>();
         }
         
-        public void ApplyTransformation(BaseModifications value, EntityFramework edmx, string[] versions)
-        {
-            TransformationHelper.ApplyTransformation(this, value, edmx, versions);
-        }
-
         [XmlIgnore]
-        public string ElementIdentifier { get { return this.Namespace; } set { this.Namespace = value; } }
+        public override string ElementIdentifier { get { return this.Namespace; } set { this.Namespace = value; } }
     }
 }

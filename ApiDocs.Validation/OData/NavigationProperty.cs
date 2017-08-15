@@ -25,6 +25,7 @@
 
 namespace ApiDocs.Validation.OData
 {
+	using System.Collections.Generic;
     using System.ComponentModel;
     using System.Xml.Serialization;
     using Transformation;
@@ -35,6 +36,7 @@ namespace ApiDocs.Validation.OData
         public NavigationProperty()
         {
             ContainsTarget = false;
+            this.Annotation = new List<Annotation>();
         }
 
         [XmlAttribute("ContainsTarget"), DefaultValue(false)]
@@ -63,17 +65,6 @@ namespace ApiDocs.Validation.OData
         /// </summary>
         [XmlIgnore]
         public bool ChangeTracking { get; set; }
-
-        //public override void ApplyTransformation(BaseModifications transform, EntityFramework edmx, string version)
-        //{
-        //    Transformation.PropertyModification value = (Transformation.PropertyModification)transform;
-        //    if (value.ContainsTarget.HasValue)
-        //    {
-        //        ContainsTarget = value.ContainsTarget.Value;
-        //    }
-
-        //    base.ApplyTransformation(transform, edmx, version);
-        //}
     }
 
     public enum Navigability
